@@ -2,92 +2,100 @@
 require('dotenv').config();
 
 const express = require('express');
-const app = express();
+const session = require('express-session');
+const passport = require('passport');
+const cors = require('cors');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors');
-const port = process.env.PORT || 10000;
 
 const connect = require('./config/database');
-const auth = require('./middleware/auth');
-// const userRouter = require('./routes/userRoute');
-const roomRouter = require('./routes/roomRoute');
-const homeRouter = require('./routes/homeRoute');
-const msgRouter = require('./routes/msgRoute');
-const signup = require('./pages/signup/signup');
-const login = require('./pages/login/login');
-const home = require('./pages/home/home');
-const passport = require('passport');
-const session = require('express-session');
-const middleware = require('./middleware/auth');
-const profile = require('./pages/profile/profile');
-const ask = require('./pages/problem/problem');
+const authMiddleware = require('./middleware/auth');
 
+// Routers & pages
+const roomRouter   = require('./routes/roomRoute');
+const homeRouter   = require('./routes/homeRoute');
+const msgRouter    = require('./routes/msgRoute');
+const problemPage  = require('./pages/problem/problem');
+const homePage     = require('./pages/home/home');
+const loginPage    = require('./pages/login/login');
+const signupPage   = require('./pages/signup/signup');
+
+const app  = express();
+const port = process.env.PORT || 10000;
+
+// ——— Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// ——— Session setup
 app.use(session({
-    secret: process.env.TOKEN_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
+  secret: process.env.TOKEN_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
+
+// ——— CORS setup
+const LOCAL_ORIGIN     = 'http://localhost:3000';
+const FRONTEND_ORIGIN  = process.env.FRONTEND_URL;         // e.g. https://zcoder-gamma.vercel.app
+const allowedOrigins   = (process.env.NODE_ENV === 'production' && FRONTEND_ORIGIN)
+  ? [FRONTEND_ORIGIN]
+  : [LOCAL_ORIGIN];
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://zcoder-liard.vercel.app'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE']
 }));
 
-// app.use('/api/user', userRouter);
-app.use('/api/room', roomRouter);
-app.use('/api/home', homeRouter);
-app.use('/api/problem', ask);
-app.use('/api/msg', msgRouter);
-
+// ——— Passport init
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(profile.app);
-app.use(home.app);
 
-app.use(login.app);
-app.use(signup.app);
+// ——— API routes
+app.use('/api/room',    roomRouter);
+app.use('/api/home',    homeRouter);
+app.use('/api/msg',     msgRouter);
+app.use('/api/problem', problemPage);
 
-app.get('/api/getAuth', middleware, (req, res) => {
-    if (req.user) {
-        return res.status(200).json(req.user);
-    } else {
-        return res.status(400).send('You need to login first!');
-    }
+// ——— Page handlers
+app.use(homePage.app);
+app.use(loginPage.app);
+app.use(signupPage.app);
+
+// ——— Auth-check endpoint
+app.get('/api/getAuth', authMiddleware, (req, res) => {
+  if (req.user) {
+    return res.status(200).json(req.user);
+  }
+  return res.status(401).json({ message: 'You need to log in first.' });
 });
 
-// ✅ Connect to MongoDB after env is loaded
+// ——— Connect to Mongo
 connect();
 
+// ——— Start server
 const server = createServer(app);
 server.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
 
+// ——— Socket.IO
 const io = new Server(server, {
-    cors: {
-        origin: ['http://localhost:3000', 'https://zcoder-kappa.vercel.app'],
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    }
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET','POST','PUT','DELETE']
+  }
 });
 
-io.on('connection', (socket) => {
-    socket.on('joinRoom', (room) => {
-        socket.join(room);
-        socket.to(room).emit('welcomeMsg', `${socket.id} has entered the chat`);
-    });
+io.on('connection', socket => {
+  socket.on('joinRoom', room => {
+    socket.join(room);
+    socket.to(room).emit('welcomeMsg', `${socket.id} has entered the chat`);
+  });
 
-    socket.on('newmessage', ({ msg, id }) => {
-        socket.to(id).emit('getmessage', msg);
-    });
-
-    socket.on('disconnect', () => {
-        // Handle cleanup here if needed
-    });
+  socket.on('newmessage', ({ msg, id }) => {
+    socket.to(id).emit('getmessage', msg);
+  });
 });
