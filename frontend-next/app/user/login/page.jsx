@@ -15,7 +15,10 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, form);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`,
+        form
+      );
       if (res.data.success === true) {
         window.sessionStorage.setItem("token", res.data.token);
         router.push("/");
@@ -36,7 +39,7 @@ const Login = () => {
 
   return (
     <>
-      {/* Zcoder Title on Top Center - Bigger and lower */}
+      {/* Zcoder Title on Top Center */}
       <div className="fixed top-12 left-1/2 transform -translate-x-1/2 z-50">
         <span className="text-6xl font-extrabold text-black select-none cursor-default">
           Zcoder
@@ -67,7 +70,10 @@ const Login = () => {
 
             {/* Email Input */}
             <div className="mb-5">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email Address
               </label>
               <input
@@ -75,7 +81,9 @@ const Login = () => {
                 type="email"
                 autoComplete="email"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#B6B09F]"
                 placeholder="your.email@example.com"
               />
@@ -83,7 +91,10 @@ const Login = () => {
 
             {/* Password Input */}
             <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Password
               </label>
               <input
@@ -91,7 +102,9 @@ const Login = () => {
                 type="password"
                 autoComplete="current-password"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#B6B09F]"
                 placeholder="******"
               />
@@ -113,7 +126,7 @@ const Login = () => {
 
             {/* Redirect to Signup */}
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">Don't have an account?</p>
+              <p className="text-sm text-gray-500">Don&apos;t have an account?</p>
               <Link href="/user/signup">
                 <button className="mt-2 w-full py-2.5 bg-black text-white text-sm rounded-lg hover:bg-[#333] transition">
                   Sign Up
