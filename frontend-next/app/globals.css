@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================
+   Global Utility Classes
+   ===================== */
+@layer utilities {
+  .text-small {
+    font-size: 0.65rem;
+  }
+
+  .text-2 {
+    font-size: 0.7rem;
+  }
+
+  .text-1 {
+    font-size: 0.6rem;
+  }
+
+  .align-center {
+    align-items: center;
+  }
+
+  .backFill {
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .backFill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #000000;
+    transform: scaleX(0) scaleY(0);
+    transform-origin: bottom left;
+    z-index: -1;
+    border-radius: 1rem;
+  }
+
+  .backFill:hover::before {
+    transition: transform 0.5s;
+    transition-timing-function: cubic-bezier(0.5, 1.6, 0.4, 0.7);
+    transform: scaleX(1) scaleY(1);
+    border-radius: 1rem;
+  }
+
+  .cursor-not-allowed {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+/* =====================
+   Optional Base Styling (Uncomment if needed)
+   ===================== */
+/*
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 242, 242, 242;
+  --background-end-rgb: 234, 228, 213;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(var(--background-end-rgb))
+  ) rgb(var(--background-start-rgb));
+}
+*/

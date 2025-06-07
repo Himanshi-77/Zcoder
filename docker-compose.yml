@@ -1,0 +1,25 @@
+
+
+services:
+    frontend:
+        image: zcoder_frontend_image
+        container_name: zoder_frontend_container
+        ports:
+            - "3000:3000"
+        env_file:
+          - ./frontend-next/.env 
+    backend:
+        image: zcoder_backend_image
+        container_name: zoder_backend_container
+        ports:
+            - "8080:8080"
+        env_file:
+          - ./backend/.env  
+        depends_on:
+          - mongo
+    mongo:
+        image: mongo:latest
+        container_name: zoder_mongo_container
+        ports:
+            - "27017:27017"  
+        
