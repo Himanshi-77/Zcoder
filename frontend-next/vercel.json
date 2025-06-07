@@ -1,5 +1,15 @@
 {
-    "rewrites": [
-      {"source": "/(.*)", "destination": "/"}
-    ]
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://zcoder-jjt0.onrender.com/api/:path*"
+    }
+  ]
+}
