@@ -1,4 +1,3 @@
-// ✅ Load environment variables before anything else
 require('dotenv').config();
 
 const express = require('express');
@@ -10,7 +9,6 @@ const port = process.env.PORT || 10000;
 
 const connect = require('./config/database');
 const auth = require('./middleware/auth');
-// const userRouter = require('./routes/userRoute');
 const roomRouter = require('./routes/roomRoute');
 const homeRouter = require('./routes/homeRoute');
 const msgRouter = require('./routes/msgRoute');
@@ -58,7 +56,6 @@ app.get('/api/getAuth', middleware, (req, res) => {
     }
 });
 
-// ✅ Connect to MongoDB after env is loaded
 connect();
 
 app.use(passport.initialize());
