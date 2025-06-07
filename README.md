@@ -2,7 +2,6 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-green)](https://zcoder-gamma.vercel.app)
 [![YouTube Demo](https://img.shields.io/badge/Watch-Demo-red)](https://www.youtube.com/watch?v=L4m6GUtONBk)
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange)
 
 ---
 
